@@ -150,18 +150,20 @@ def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except ValueError:
-            return "Give me name and phone please."
+        except ValueError as e:  ## Перероблена обробка ValueError для показу конкретної помилки
+            return f"{e}"
         except KeyError as e:
             return f"Invalid command. {str(e)}"
         except IndexError:
             return "Invalid command. Usage: command username phone"
-        except Exception as e:
+        except Exception as e:  ## Перероблена обробка загальних помилок для показу конкретної помилки
             return f"An error occurred: {str(e)}"
     return inner
 
 # Розбирає введений користувачем рядок на команду та аргументи
 def parse_input(user_input):
+    if not user_input:  ## Обробка пустого вводу комади в боті
+        return None, []
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, args
@@ -255,16 +257,21 @@ def main():
         elif command == "birthdays":
             print(birthdays(book))
 
+        elif command is None:  ## Обробка пустого вводу
+            print("Please enter a command.")
+
         else:
             print("Invalid command.")
 
 if __name__ == "__main__":
     main()
-
-
-
 ################    Тест з домашньої роботи  17.05.2024   ###############################
 # hello: Отримати вітання від бота.
+# "пуста строка" - Please enter a command.
+# all при пустому списку = No contacts found.
+
+
+
 
 # add [ім'я] [телефон]: Додати або новий контакт з іменем та телефонним номером, або телефонний номер к контакту який вже існує.
 # add Serhii 0979104392
@@ -291,6 +298,7 @@ if __name__ == "__main__":
 
 # birthdays: Показати дні народження, які відбудуться протягом наступного тижня по днях тижня
 
+# тести на помилкові ведені дані - працює (різні помилки)
 
 # close або exit: Закрити бота
 
